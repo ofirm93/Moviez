@@ -2,7 +2,6 @@ package com.example.android.moviez.data;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.BaseColumns;
 import android.text.format.Time;
@@ -12,7 +11,7 @@ import com.example.android.moviez.BuildConfig;
 /**
  * Defines table and column names for the movies database.
  */
-public class MoviesContract {
+public class MovieContract {
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.
@@ -27,7 +26,7 @@ public class MoviesContract {
     // looking at movies data.
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_GENRE = "genre";
-    public static final String PATH_RELATIONSHIP = "relationship";
+    public static final String PATH_RELATION = "relation";
 
 
     // TODO Delete this method if not needed.
@@ -93,30 +92,6 @@ public class MoviesContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        /* Inner class that defines the table contents of the movies and genres relationship table*/
-        public static final class RelationshipEntry implements BaseColumns {
-
-            public static final Uri CONTENT_URI =
-                    BASE_CONTENT_URI.buildUpon().appendPath(PATH_RELATIONSHIP).build();
-
-            public static final String CONTENT_TYPE =
-                    ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATIONSHIP;
-            public static final String CONTENT_ITEM_TYPE =
-                    ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATIONSHIP;
-
-            public static final String TABLE_NAME = "relationship";
-
-            // The Columns which will be in the table
-            // Column with the foreign key into the genres table.
-            public static final String COLUMN_GENRE_ID = "genre_id";
-            // Column with the foreign key into the movies table.
-            public static final String COLUMN_MOVIE_ID = "name";
-
-            // This method builds a URI that corresponds to the given id
-            public static Uri buildgRelationUri(long id) {
-                return ContentUris.withAppendedId(CONTENT_URI, id);
-            }
-        }
         /*
             Student: This is the buildWeatherLocation function you filled in.
             TODO Delete the unnecessary method or add as required
@@ -152,5 +127,30 @@ public class MoviesContract {
             else
                 return 0;
         }*/
+
+    }
+    /* Inner class that defines the table contents of the movies and genres relations table*/
+    public static final class RelationEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_RELATION).build();
+
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATION;
+        public static final String CONTENT_ITEM_TYPE =
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATION;
+
+        public static final String TABLE_NAME = "relation";
+
+        // The Columns which will be in the table
+        // Column with the foreign key into the genres table.
+        public static final String COLUMN_GENRE_ID = "genre_id";
+        // Column with the foreign key into the movies table.
+        public static final String COLUMN_MOVIE_ID = "name";
+
+        // This method builds a URI that corresponds to the given id
+        public static Uri buildgRelationUri(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
     }
 }
