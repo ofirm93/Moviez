@@ -27,7 +27,9 @@ public class MovieContract {
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_GENRE = "genre";
     public static final String PATH_RELATION = "relation";
-
+    public static final String PATH_FAVORITE_MOVIE = "favorite_movie";
+    public static final String PATH_FAVORITES_GENRE = "favorite_genre";
+    public static final String PATH_FAVORITES_RELATION = "favorite_relation";
 
     // TODO Delete this method if not needed.
     // To make it easy to query for the exact date, we normalize all dates that go into
@@ -46,13 +48,16 @@ public class MovieContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MOVIE).build();
 
+        public static final Uri FAVORITE_CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITE_MOVIE).build();
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
-        // Table name
-        public static final String TABLE_NAME = "movie";
+        // Tables name
+        public static final String MAIN_TABLE_NAME = "movie.all";
+        public static final String FAVORITES_TABLE_NAME = "movie.favorite";
 
         // The Columns which will be in the table
         public static final String COLUMN_TITLE = "title";
@@ -65,8 +70,11 @@ public class MovieContract {
         public static final String COLUMN_AVG_SCORE = "avg_score";
 
         // This method builds a URI that corresponds to the given id
-        public static Uri buildMoviesUri(long id) {
+        public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildFavoriteMovieUri(long id){
+            return ContentUris.withAppendedId(FAVORITE_CONTENT_URI, id);
         }
     }
 
@@ -76,12 +84,16 @@ public class MovieContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_GENRE).build();
 
+        public static final Uri FAVORITE_CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITES_GENRE).build();
+
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GENRE;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GENRE;
 
-        public static final String TABLE_NAME = "genre";
+        public static final String MAIN_TABLE_NAME = "genre.all";
+        public static final String FAVORITES_TABLE_NAME = "genre.favorite";
 
         // The Columns which will be in the table
         public static final String COLUMN_GENRE_ID = "genre_id";
@@ -90,6 +102,9 @@ public class MovieContract {
         // This method builds a URI that corresponds to the given id
         public static Uri buildgGenreUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static Uri buildFavoriteGenreUri(long id){
+            return ContentUris.withAppendedId(FAVORITE_CONTENT_URI, id);
         }
 
         /*
@@ -135,22 +150,40 @@ public class MovieContract {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_RELATION).build();
 
+        public static final Uri FAVORITE_CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(PATH_FAVORITES_RELATION).build();
+
         public static final String CONTENT_TYPE =
                 ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATION;
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATION;
 
-        public static final String TABLE_NAME = "relation";
+        public static final String MAIN_TABLE_NAME = "relation.all";
+        public static final String FAVORITES_TABLE_NAME = "relation.favorite";
 
         // The Columns which will be in the table
         // Column with the foreign key into the genres table.
         public static final String COLUMN_GENRE_ID = "genre_id";
         // Column with the foreign key into the movies table.
-        public static final String COLUMN_MOVIE_ID = "name";
+        public static final String COLUMN_MOVIE_ID = "movie_id";
 
         // This method builds a URI that corresponds to the given id
         public static Uri buildgRelationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildFavoriteRelationsUri(long id){
+            return ContentUris.withAppendedId(FAVORITE_CONTENT_URI, id);
+        }
     }
+
+    public static String getMovieIdFromUri(Uri uri) {
+        return uri.getPathSegments().get(1);
+    }
+
+    public static String getGenreFromUri(Uri uri) {
+        return uri.getPathSegments().get(1);
+
+    }
+
 }
