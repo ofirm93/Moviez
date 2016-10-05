@@ -36,6 +36,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.android.moviez.MainActivity" />
         </activity>
+        <service
+            android:name=".Sync.MoviezSyncService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

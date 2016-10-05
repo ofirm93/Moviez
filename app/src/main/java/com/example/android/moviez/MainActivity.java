@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.android.moviez.Sync.MoviezSyncService;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -103,10 +104,8 @@ public class MainActivity extends AppCompatActivity {
         updateMoviesData();
     }
 
-    private void updateMoviesData() {
-        FetchMoviesData fetchMoviesData = new FetchMoviesData();
-        isLoading = true;
-        fetchMoviesData.execute();
+    private void updateMoviesData(){
+        MoviezSyncService.startIntent(this, currentPage);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
