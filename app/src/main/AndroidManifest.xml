@@ -38,7 +38,7 @@
         </activity>
         <service
             android:name=".Sync.MoviezSyncService"
-            android:exported="false"></service>
+            android:exported="false" />
     </application>
 
 </manifest>
