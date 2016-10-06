@@ -1,87 +1,117 @@
 package com.example.android.moviez;
 
-import android.content.Context;
-import android.net.Uri;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.GridView;
 
+import com.example.android.moviez.Sync.MoviezSyncService;
+import com.example.android.moviez.data.MovieContract;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MovieGallaryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MovieGallaryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MovieGallaryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    private OnFragmentInteractionListener mListener;
+public class MovieGallaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    private final static int MOVIES_LOADER_ID = 0;
+    private int currentPage = 1;
+    private MovieAdapter mGalleryViewAdapter;
+    private int totalViewInGrid = 0;
+    private boolean isDBUpdates = false;
+
+    private static final String[] MOVIES_COLUMNS = {
+            MovieContract.MovieEntry.MAIN_TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_TITLE,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH,
+            MovieContract.MovieEntry.COLUMN_ADULT,
+            MovieContract.MovieEntry.COLUMN_AVG_SCORE
+    };
+
+    // These indices are tied to MOVIES_COLUMNS.  If MOVIES_COLUMNS changes, these
+    // must change.
+    static final int COL_MOVIE_ID = 0;
+    static final int COL_TITLE = 1;
+    static final int COL_POSTER_PATH = 2;
+    static final int COL_ADULT = 3;
+    static final int COL_AVG_SCORE = 4;
 
     public MovieGallaryFragment() {
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MovieGallaryFragment.
-     */
-    // TODO: Decide whether you need a factory for this fragment
-    public static MovieGallaryFragment newInstance(String param1, String param2) {
-        MovieGallaryFragment fragment = new MovieGallaryFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mGalleryViewAdapter = new MovieAdapter(getContext(), null, 0);
+        MoviezSyncService.startIntent(getContext(), currentPage);
+        isDBUpdates = true;
+        currentPage++;
+    }
 
+    private void updateMoviesData(int page){
+        MoviezSyncService.startIntent(getContext(), page);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movie_gallary, container, false);
+        View view = inflater.inflate(R.layout.fragment_movie_gallary, container, false);
+
+        GridView gallery = (GridView) view.findViewById(R.id.fragment_movie_gallery_grid);
+
+        gallery.setAdapter(mGalleryViewAdapter);
+        gallery.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if(!isDBUpdates && firstVisibleItem + visibleItemCount >= totalItemCount && currentPage<=200){
+                    updateMoviesData(currentPage);
+                    isDBUpdates = true;
+                    currentPage++;
+                    onChanged();
+                }
+                if(totalViewInGrid < totalItemCount){
+                    totalViewInGrid = totalItemCount;
+                    isDBUpdates = false;
+                }
+            }
+        });
+        return view;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIES_LOADER_ID, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI, MOVIES_COLUMNS,
+                null, null, null);
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mGalleryViewAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mGalleryViewAdapter.swapCursor(null);
+    }
+
+    // TODO: If there is a change in the settings that causes change in the database call this method
+    void onChanged(){
+        getLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
+
     }
 }

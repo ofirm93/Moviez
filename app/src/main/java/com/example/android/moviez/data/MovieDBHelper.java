@@ -27,85 +27,111 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // Create a table to hold the movie's details. Each movie consists of its name,
         // release date, language, overview, child appropriateness, poster url path,
         // and votes counted in for the given score.
+        // The SQL query created is:
+        // CREATE TABLE movie_all (_id INTEGER PRIMARY KEY,title TEXT NOT NULL,
+        // release_date TEXT NOT NULL, language TEXT NOT NULL, overview TEXT NOT NULL,
+        // adult BOOLEAN NOT NULL CHECK(adult IN (0,1)), poster_path TEXT NOT NULL,
+        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL);
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.MAIN_TABLE_NAME + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY," +
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_LANGUAGE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL CHECK (" +
-                MovieEntry.COLUMN_ADULT + " IN (0,1) " +
-                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL " +
-                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL " +
-                " );";
+                MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL CHECK(" +
+                MovieEntry.COLUMN_ADULT + " IN (0,1)), " +
+                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL" +
+                ");";
 
         // Create a table to hold the genres. Each genre consists of its id given by TMDB site
         // and its name.
+        // The SQL query created is:
+        // CREATE TABLE genre_all (_id INTEGER PRIMARY KEY AUTOINCREMENT, genre_id INTEGER NOT NULL,
+        // name TEXT NOT NULL);
         final String SQL_CREATE_GENRE_TABLE = "CREATE TABLE " + GenreEntry.MAIN_TABLE_NAME + " (" +
-                GenreEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                GenreEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 GenreEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
-                GenreEntry.COLUMN_NAME + " TEXT NOT NULL " +
-                " );";
+                GenreEntry.COLUMN_NAME + " TEXT NOT NULL" +
+                ");";
 
         // Create a table to hold the relations between movies and their genres. Each relation
         // consists of the id of the movie in our database (not in TMDB's database !!!)
         // and its genre id (again in our database not TMDB's).
+        // The SQL query created is:
+        // CREATE TABLE relation_all (_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        // movie_id INTEGER NOT NULL, genre_id INTEGER NOT NULL,
+        // FOREIGN KEY (movie_id) REFERENCES movie_all (_id),
+        // FOREIGN KEY (genre_id) REFERENCES genre_all (_id));
         final String SQL_CREATE_RELATION_TABLE = "CREATE TABLE " + RelationEntry.MAIN_TABLE_NAME + " (" +
-                RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 RelationEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 RelationEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie table
                 // and the genre_id column as a foreign key to genre table.
-                " FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
+                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
                 MovieEntry.MAIN_TABLE_NAME + " (" + MovieEntry._ID + "), " +
-                " FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
-                GenreEntry.MAIN_TABLE_NAME + " (" + GenreEntry._ID + "), " +
-                " );";
+                "FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
+                GenreEntry.MAIN_TABLE_NAME + " (" + GenreEntry._ID + ")" +
+                ");";
 
         // Create a table to hold the favorite movies' details. Each movie consists of its name,
         // release date, language, overview, child appropriateness, poster url path,
         // and votes counted in for the given score.
+        // The SQL query created is:
+        // CREATE TABLE movie_favorite (_id INTEGER PRIMARY KEY, title TEXT NOT NULL,
+        // release_date TEXT NOT NULL, language TEXT NOT NULL, overview TEXT NOT NULL,
+        // adult BOOLEAN NOT NULL CHECK(adult IN (0,1)), poster_path TEXT NOT NULL,
+        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL);
         final String SQL_CREATE_MOVIE_FAVORITES_TABLE = "CREATE TABLE " +
                 MovieEntry.FAVORITES_TABLE_NAME + " (" +
-                MovieEntry._ID + " INTEGER PRIMARY KEY," +
+                MovieEntry._ID + " INTEGER PRIMARY KEY, " +
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_LANGUAGE + " TEXT NOT NULL, " +
-                MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL CHECK (" +
-                MovieEntry.COLUMN_ADULT + " IN (0,1) " +
-                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL " +
-                MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL " +
-                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL " +
-                " );";
+                MovieEntry.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL CHECK(" +
+                MovieEntry.COLUMN_ADULT + " IN (0,1)), " +
+                MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL" +
+                ");";
 
         // Create a table to hold the favorite movies' genres. Each genre consists of its id given by TMDB site
         // and its name.
-        final String SQL_CREATE_GENRE_FAVORITES_TABLE = "CREATE TABLE " + GenreEntry.MAIN_TABLE_NAME
-                + " (" + GenreEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+        // The SQL query created is:
+        // CREATE TABLE genre_favorite (_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        // genre_id INTEGER NOT NULL, name TEXT NOT NULL);
+        final String SQL_CREATE_GENRE_FAVORITES_TABLE = "CREATE TABLE " + GenreEntry.FAVORITES_TABLE_NAME
+                + " (" + GenreEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 GenreEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
-                GenreEntry.COLUMN_NAME + " TEXT NOT NULL " +
-                " );";
+                GenreEntry.COLUMN_NAME + " TEXT NOT NULL" +
+                ");";
 
         // Create a table to hold the relations between favorite movies and their genres. Each relation
         // consists of the id of the movie in our database (not in TMDB's database !!!)
         // and its genre id (again in our database not TMDB's).
-        final String SQL_CREATE_RELATION_FAVORITES_TABLE = "CREATE TABLE " + RelationEntry.MAIN_TABLE_NAME + " (" +
-                RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+        // The SQL query created is:
+        // CREATE TABLE relation_favorite (_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        // movie_id INTEGER NOT NULL, genre_id INTEGER NOT NULL,
+        // FOREIGN KEY (movie_id) REFERENCES movie_favorite (_id),
+        // FOREIGN KEY (genre_id) REFERENCES genre_favorite (_id));
+        final String SQL_CREATE_RELATION_FAVORITES_TABLE = "CREATE TABLE " + RelationEntry.FAVORITES_TABLE_NAME + " (" +
+                RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 RelationEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
                 RelationEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie table
                 // and the genre_id column as a foreign key to genre table.
-                " FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieEntry.MAIN_TABLE_NAME + " (" + MovieEntry._ID + "), " +
-                " FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
-                GenreEntry.MAIN_TABLE_NAME + " (" + GenreEntry._ID + "), " +
-                " );";
+                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
+                MovieEntry.FAVORITES_TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                "FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
+                GenreEntry.FAVORITES_TABLE_NAME + " (" + GenreEntry._ID + ")" +
+                ");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_GENRE_FAVORITES_TABLE);
-        sqLiteDatabase.execSQL(SQL_CREATE_RELATION_FAVORITES_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_GENRE_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_RELATION_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_FAVORITES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_GENRE_FAVORITES_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_RELATION_FAVORITES_TABLE);

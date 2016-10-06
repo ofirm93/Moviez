@@ -4,8 +4,8 @@
     android:name="com.example.android.moviez.MovieGallaryFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layoutDirection="ltr"
-    tools:context="com.example.android.moviez.MainActivity" />
+    tools:context="com.example.android.moviez.MainActivity"
+    tools:layout="@layout/fragment_movie_gallary" />
     <!-- TODO: Delete android:layoutDirection line after finishing -->
 
 

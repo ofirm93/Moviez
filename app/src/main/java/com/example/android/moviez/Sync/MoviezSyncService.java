@@ -34,7 +34,6 @@ public class MoviezSyncService extends IntentService {
 
     public MoviezSyncService() {
         super("MoviezSyncService");
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
 
     /**
@@ -53,6 +52,9 @@ public class MoviezSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if(sharedPreferences == null){
+            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        }
         String moviesJsonStr = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;

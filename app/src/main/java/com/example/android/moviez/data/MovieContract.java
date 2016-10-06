@@ -15,7 +15,7 @@ public class MovieContract {
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.
-    public static final String CONTENT_AUTHORITY = BuildConfig.APPLICATION_ID; // TODO delete if this line works "com.example.android.moviez.app";
+    public static final String CONTENT_AUTHORITY = "com.example.android.moviez.app";
 
     // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
     // the content provider.
@@ -31,17 +31,6 @@ public class MovieContract {
     public static final String PATH_FAVORITES_GENRE = "favorite_genre";
     public static final String PATH_FAVORITES_RELATION = "favorite_relation";
 
-    // TODO Delete this method if not needed.
-    // To make it easy to query for the exact date, we normalize all dates that go into
-    // the database to the start of the the Julian day at UTC.
-    public static long normalizeDate(long startDate) {
-        // normalize the start date to the beginning of the (UTC) day
-        Time time = new Time();
-        time.set(startDate);
-        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
-        return time.setJulianDay(julianDay);
-    }
-
     /* Inner class that defines the table contents of the movies table */
     public static final class MovieEntry implements BaseColumns {
 
@@ -56,8 +45,8 @@ public class MovieContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
 
         // Tables name
-        public static final String MAIN_TABLE_NAME = "movie.all";
-        public static final String FAVORITES_TABLE_NAME = "movie.favorite";
+        public static final String MAIN_TABLE_NAME = "movie_all";
+        public static final String FAVORITES_TABLE_NAME = "movie_favorite";
 
         // The Columns which will be in the table
         public static final String COLUMN_TITLE = "title";
@@ -92,8 +81,8 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_GENRE;
 
-        public static final String MAIN_TABLE_NAME = "genre.all";
-        public static final String FAVORITES_TABLE_NAME = "genre.favorite";
+        public static final String MAIN_TABLE_NAME = "genre_all";
+        public static final String FAVORITES_TABLE_NAME = "genre_favorite";
 
         // The Columns which will be in the table
         public static final String COLUMN_GENRE_ID = "genre_id";
@@ -158,8 +147,8 @@ public class MovieContract {
         public static final String CONTENT_ITEM_TYPE =
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_RELATION;
 
-        public static final String MAIN_TABLE_NAME = "relation.all";
-        public static final String FAVORITES_TABLE_NAME = "relation.favorite";
+        public static final String MAIN_TABLE_NAME = "relation_all";
+        public static final String FAVORITES_TABLE_NAME = "relation_favorite";
 
         // The Columns which will be in the table
         // Column with the foreign key into the genres table.
