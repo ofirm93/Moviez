@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieGallaryFragment.Callback{
 
     private final static String LOG_TAG = MainActivity.class.getSimpleName();
     private SharedPreferences sharedPreferences;
@@ -82,5 +82,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onItemSelected(Uri movieUri) {
+        Intent infoIntent = new Intent(this, InfoActivity.class).setData(movieUri);
+        startActivity(infoIntent);
     }
 }
