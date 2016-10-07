@@ -1,22 +1,26 @@
 package com.example.android.moviez;
 
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.example.android.moviez.Sync.MoviezSyncService;
 import com.example.android.moviez.data.MovieContract;
 
 public class MovieGallaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String LOG_TAG = MovieGallaryFragment.class.getSimpleName();
     private final static int MOVIES_LOADER_ID = 0;
     private int currentPage = 1;
     private MovieAdapter mGalleryViewAdapter;
@@ -64,6 +68,32 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
         GridView gallery = (GridView) view.findViewById(R.id.fragment_movie_gallery_grid);
 
         gallery.setAdapter(mGalleryViewAdapter);
+
+        gallery.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                MovieAdapter.ViewHolder viewHolder =(MovieAdapter.ViewHolder) view.getTag();
+                if(viewHolder != null){
+                    long movieId = Long.parseLong(viewHolder.movieID);
+                    Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                    if (cursor != null) {
+                        Uri uri = MovieContract.MovieEntry.buildMovieUri(movieId);
+                        try {
+                            Callback callback = (MainActivity) getActivity();
+                            callback.onItemSelected(uri);
+                        }
+                        catch (ClassCastException e){
+                            Log.v(LOG_TAG, "The calling class is not implementing Callback.");
+                        }
+                    }
+                }
+
+            }
+        });
+
         gallery.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
@@ -113,5 +143,12 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
     void onChanged(){
         getLoaderManager().restartLoader(MOVIES_LOADER_ID, null, this);
 
+    }
+
+    public interface Callback{
+        /**
+         * MovieGalleryFragment callback method for when an item has been selected.
+         */
+        public void onItemSelected(Uri movieUri);
     }
 }

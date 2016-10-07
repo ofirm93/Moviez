@@ -155,4 +155,7 @@
     </string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="content_authority">com.example.android.moviez.app</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

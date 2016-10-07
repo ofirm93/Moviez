@@ -5,7 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.moviez.MainActivity"
-    tools:layout="@layout/fragment_movie_gallary" />
+    tools:layout="@layout/fragment_info" />
     <!-- TODO: Delete android:layoutDirection line after finishing -->
-
-
