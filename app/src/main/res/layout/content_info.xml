@@ -29,30 +29,25 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:baselineAligned="false" >
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:orientation="vertical">
-                <!--<TextView
-                    android:id="@+id/info_release_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/text_margin"
-                    android:text="Release Date : "/>-->
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
                     android:text="Genre"
                     style="@style/TextAppearance.AppCompat.SmallBold" />
+
                 <TextView
                     android:id="@+id/info_genres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:text="<<Genres>>"
+                    android:text="genres"
                     style="@style/TextAppearance.AppCompat.Small" />
                 <TextView
                     android:layout_width="wrap_content"
@@ -65,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:text="<<Overview>>"
+                    android:text="overview"
                     style="@style/TextAppearance.AppCompat.Small" />
                 <TextView
                     android:layout_width="wrap_content"
@@ -78,8 +73,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/text_margin"
-                    android:text="<<Language>>"
+                    android:text="language"
                     style="@style/TextAppearance.AppCompat.Small" />
+                <TextView
+                    android:id="@+id/info_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:text="Release Date :"
+                    style="@style/TextAppearance.AppCompat.SmallBold" />
             </LinearLayout>
 
             <LinearLayout
@@ -118,6 +120,7 @@
                     android:adjustViewBounds="true"
                     android:visibility="invisible"/>
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>
