@@ -1,8 +1,10 @@
 package com.example.android.moviez;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -22,10 +24,15 @@ import com.example.android.moviez.data.MovieContract;
 public class MovieGallaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = MovieGallaryFragment.class.getSimpleName();
     private final static int MOVIES_LOADER_ID = 0;
-    private int currentPage = 1;
+    private static final int MOVIES_IN_ROW = 3;
+    final String pages = "pages";
+
     private MovieAdapter mGalleryViewAdapter;
     private int totalViewInGrid = 0;
     private boolean isDBUpdates = false;
+    private boolean isUpdatedDBOnce = false;
+    private SharedPreferences sharedPreferences;
+
 
     private static final String[] MOVIES_COLUMNS = {
             MovieContract.MovieEntry.MAIN_TABLE_NAME + "." + MovieContract.MovieEntry._ID,
@@ -49,14 +56,25 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mGalleryViewAdapter = new MovieAdapter(getContext(), null, 0);
-        MoviezSyncService.startIntent(getContext(), currentPage);
-        isDBUpdates = true;
-        currentPage++;
+        int currentPage = sharedPreferences.getInt(pages, -1);;
+        if(currentPage == -1) {
+            sharedPreferences.edit().putInt(pages, 1).commit();
+            downloadNewPage(sharedPreferences.getInt(pages, -1));
+        }
+            isUpdatedDBOnce = true;
     }
 
     private void updateMoviesData(int page){
         MoviezSyncService.startIntent(getContext(), page);
+    }
+
+    private void addPage(){
+        int page = sharedPreferences.getInt(pages, -1);
+        if(page != -1){
+            sharedPreferences.edit().putInt(pages, page+1).commit();
+        }
     }
 
     @Override
@@ -102,19 +120,26 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
 
             @Override
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                if(!isDBUpdates && firstVisibleItem + visibleItemCount >= totalItemCount && currentPage<=200){
-                    updateMoviesData(currentPage);
-                    isDBUpdates = true;
-                    currentPage++;
-                    onChanged();
-                }
-                if(totalViewInGrid < totalItemCount){
-                    totalViewInGrid = totalItemCount;
-                    isDBUpdates = false;
+                int currentPage = sharedPreferences.getInt(pages, -1);;
+                if(isUpdatedDBOnce){
+                    if(!isDBUpdates && firstVisibleItem + visibleItemCount + MOVIES_IN_ROW >= totalItemCount && currentPage<=200){
+                        downloadNewPage(currentPage);
+                    }
+                    if(totalViewInGrid < totalItemCount){
+                        totalViewInGrid = totalItemCount;
+                        isDBUpdates = false;
+                    }
                 }
             }
         });
         return view;
+    }
+
+    private void downloadNewPage(int currentPage) {
+        updateMoviesData(currentPage);
+        isDBUpdates = true;
+        addPage();
+        onChanged();
     }
 
     @Override
