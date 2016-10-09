@@ -63,27 +63,27 @@ public class MovieProvider extends ContentProvider {
                 MovieContract.RelationEntry.MAIN_TABLE_NAME + " INNER JOIN " +
                         MovieContract.MovieEntry.MAIN_TABLE_NAME +
                         " ON " + MovieContract.RelationEntry.MAIN_TABLE_NAME +
-                        "." + MovieContract.RelationEntry.COLUMN_MOVIE_ID +
+                        "." + MovieContract.RelationEntry.COLUMN_MOVIE_TMDB_ID +
                         " = " + MovieContract.MovieEntry.MAIN_TABLE_NAME +
-                        "." + MovieContract.MovieEntry._ID +
+                        "." + MovieContract.MovieEntry.COLUMN_TMDB_ID +
                         " INNER JOIN " + MovieContract.GenreEntry.MAIN_TABLE_NAME +
                         " ON " + MovieContract.RelationEntry.MAIN_TABLE_NAME +
                         "." + MovieContract.RelationEntry.COLUMN_GENRE_ID +
                         " = " + MovieContract.GenreEntry.MAIN_TABLE_NAME +
-                        "." + MovieContract.GenreEntry._ID);
+                        "." + MovieContract.GenreEntry.COLUMN_GENRE_ID);
 
         sFavoriteMoviesQueryBuilder.setTables(
                 MovieContract.RelationEntry.FAVORITES_TABLE_NAME + " INNER JOIN " +
                 MovieContract.MovieEntry.FAVORITES_TABLE_NAME +
                 " ON " + MovieContract.RelationEntry.FAVORITES_TABLE_NAME +
-                "." + MovieContract.RelationEntry.COLUMN_MOVIE_ID +
+                "." + MovieContract.RelationEntry.COLUMN_MOVIE_TMDB_ID +
                 " = " + MovieContract.MovieEntry.FAVORITES_TABLE_NAME +
-                "." + MovieContract.MovieEntry._ID +
+                "." + MovieContract.MovieEntry.COLUMN_TMDB_ID +
                 " INNER JOIN " + MovieContract.GenreEntry.FAVORITES_TABLE_NAME +
                 " ON " + MovieContract.RelationEntry.FAVORITES_TABLE_NAME +
                 "." + MovieContract.RelationEntry.COLUMN_GENRE_ID +
                 " = " + MovieContract.GenreEntry.FAVORITES_TABLE_NAME +
-                "." + MovieContract.GenreEntry._ID);
+                "." + MovieContract.GenreEntry.COLUMN_GENRE_ID);
     }
 
     //movie.all._ID = ?
@@ -95,7 +95,7 @@ public class MovieProvider extends ContentProvider {
     private static final String sFavoriteMoviesIdSelection =
             MovieContract.MovieEntry.MAIN_TABLE_NAME +
                     "." + MovieContract.MovieEntry._ID + " = ? ";
-    private static final String sFavoriteMoviesGenreSelection =
+    private static final String sFavoriteMoviesGenreSelection = // TODO Right now seaching in favorites is by genre "name" and not id.
             MovieContract.GenreEntry.FAVORITES_TABLE_NAME +
                     "." + MovieContract.GenreEntry.COLUMN_NAME + " = ? ";
 /* TODO Delete if irrelavant.
@@ -433,7 +433,7 @@ public class MovieProvider extends ContentProvider {
             case RELATION: {
                 long _id = db.insert(MovieContract.RelationEntry.MAIN_TABLE_NAME, null, values);
                 if ( _id > 0 )
-                    returnUri = MovieContract.RelationEntry.buildgRelationUri(_id);
+                    returnUri = MovieContract.RelationEntry.buildRelationUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;

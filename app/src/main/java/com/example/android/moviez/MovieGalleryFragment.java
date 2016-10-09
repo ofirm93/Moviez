@@ -18,13 +18,14 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.example.android.moviez.Sync.GenreSyncService;
 import com.example.android.moviez.Sync.MoviezSyncService;
 import com.example.android.moviez.data.MovieContract;
 
-public class MovieGallaryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
-    private static final String LOG_TAG = MovieGallaryFragment.class.getSimpleName();
+public class MovieGalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
+    private static final String LOG_TAG = MovieGalleryFragment.class.getSimpleName();
     private final static int MOVIES_LOADER_ID = 0;
-    private static final int MOVIES_IN_ROW = 3;
+    private static final int MOVIES_COEFFICIENT = 6;
     final String pages = "pages";
 
     private MovieAdapter mGalleryViewAdapter;
@@ -50,7 +51,7 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
     static final int COL_ADULT = 3;
     static final int COL_AVG_SCORE = 4;
 
-    public MovieGallaryFragment() {
+    public MovieGalleryFragment() {
     }
 
     @Override
@@ -61,6 +62,7 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
         int currentPage = sharedPreferences.getInt(pages, -1);;
         if(currentPage == -1) {
             sharedPreferences.edit().putInt(pages, 1).commit();
+            updateGenresData();
             downloadNewPage(sharedPreferences.getInt(pages, -1));
         }
             isUpdatedDBOnce = true;
@@ -68,6 +70,9 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
 
     private void updateMoviesData(int page){
         MoviezSyncService.startIntent(getContext(), page);
+    }
+    private void updateGenresData() {
+        GenreSyncService.startIntent(getContext());
     }
 
     private void addPage(){
@@ -122,7 +127,7 @@ public class MovieGallaryFragment extends Fragment implements LoaderManager.Load
             public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int currentPage = sharedPreferences.getInt(pages, -1);;
                 if(isUpdatedDBOnce){
-                    if(!isDBUpdates && firstVisibleItem + visibleItemCount + MOVIES_IN_ROW >= totalItemCount && currentPage<=200){
+                    if(!isDBUpdates && firstVisibleItem + visibleItemCount + MOVIES_COEFFICIENT >= totalItemCount && currentPage<=200){
                         downloadNewPage(currentPage);
                     }
                     if(totalViewInGrid < totalItemCount){

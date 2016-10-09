@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -22,11 +23,35 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Vector;
+
+import static com.example.android.moviez.data.MovieContract.MovieEntry.COLUMN_POSTER_PATH;
 
 public class MoviezSyncService extends IntentService {
 
     private final static String LOG_TAG = MoviezSyncService.class.getSimpleName();
+    private final static int MOVIES_IN_PAGE = 20;
+
+    private static final String[] MOVIES_COLUMNS = {
+            MovieContract.MovieEntry.MAIN_TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_POSTER_PATH
+    };
+
+    // These indices are tied to MOVIES_COLUMNS.  If MOVIES_COLUMNS changes, these
+    // must change.
+    static final int COL_MOVIE_ID = 0;
+    static final int COL_POSTER_PATH = 1;
+
+    private static final String[] GENRES_COLUMNS = {
+            MovieContract.GenreEntry.MAIN_TABLE_NAME + "." + MovieContract.GenreEntry._ID
+    };
+
+    // These indices are tied to GENRES_COLUMNS.  If GENRES_COLUMNS changes, these
+    // must change.
+    static final int COL_GENRE_ID = 0;
+
     private final String myAPIKey = "33bf92db5dd97f28a99a01826efba1b3";
     private SharedPreferences sharedPreferences;
 
@@ -52,6 +77,12 @@ public class MoviezSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        boolean isDownloadedGenres = false;
+        while(!isDownloadedGenres){
+            if(GenreSyncService.getNuberOfCalls() > 0) {
+                isDownloadedGenres = true;
+            }
+        }
         if(sharedPreferences == null){
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         }
@@ -68,9 +99,11 @@ public class MoviezSyncService extends IntentService {
         final String POPULAR = "popular";
         final String PAGE_PARAM = "page";
         final String API_KEY_PARAM = "api_key";
+        final String LANGUAGE_PARAM = "language";
 
         final int currentPage = intent.getIntExtra("current_page", 1);
 
+        String lang = "en-US";
         String categoryPref = sharedPreferences.
                 getString(getString(R.string.pref_key_sorting_option),
                         getString(R.string.pref_sort_rating));
@@ -86,6 +119,7 @@ public class MoviezSyncService extends IntentService {
                     .appendPath(categoryPref)
                     .appendQueryParameter(PAGE_PARAM, Integer.toString(currentPage))
                     .appendQueryParameter(API_KEY_PARAM, myAPIKey)
+                    .appendQueryParameter(LANGUAGE_PARAM, lang)
                     .build();
 
             URL url = new URL(uri.toString());
@@ -152,12 +186,15 @@ public class MoviezSyncService extends IntentService {
         final String JSON_POSTER_PATH = "poster_path";
         final String JSON_VOTE_COUNT = "vote_count";
         final String JSON_AVG_SCORE = "vote_average";
+        final String JSON_GENRE_IDS = "genre_ids";
+        final String JSON_MOVIE_TMDB_ID = "id";
 
         if(moviesJsonStr != null) {
             try {
                 JSONObject movies = new JSONObject(moviesJsonStr);
                 JSONArray moviesJSONArray = movies.getJSONArray(JSON_MOVIE_ARRAY);
                 Vector<ContentValues> moviesVector = new Vector<>(moviesJSONArray.length());
+                Vector<ContentValues> relationsVector = new Vector<>();
                 for(int i = 0; i<moviesJSONArray.length(); i++){
                     JSONObject movieJSON = moviesJSONArray.getJSONObject(i);
                     String title = movieJSON.getString(JSON_TITLE);
@@ -169,6 +206,17 @@ public class MoviezSyncService extends IntentService {
                     String posterPath = movieJSON.getString(JSON_POSTER_PATH);
                     int voteCount = movieJSON.getInt(JSON_VOTE_COUNT);
                     double avgScore = movieJSON.getDouble(JSON_AVG_SCORE);
+                    int movieTMDBId = movieJSON.getInt(JSON_MOVIE_TMDB_ID);
+
+                    JSONArray genresJSONArray = movieJSON.getJSONArray(JSON_GENRE_IDS);
+                    for (int j = 0; j<genresJSONArray.length(); j++){
+                        int genreId = genresJSONArray.getInt(j);
+
+                        ContentValues relation = new ContentValues();
+                        relation.put(MovieContract.RelationEntry.COLUMN_MOVIE_TMDB_ID, movieTMDBId);
+                        relation.put(MovieContract.RelationEntry.COLUMN_GENRE_ID, genreId);
+                        relationsVector.add(relation);
+                    }
 
                     ContentValues movie = new ContentValues();
                     movie.put(MovieContract.MovieEntry.COLUMN_TITLE, title);
@@ -179,19 +227,31 @@ public class MoviezSyncService extends IntentService {
                     movie.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, posterPath);
                     movie.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, voteCount);
                     movie.put(MovieContract.MovieEntry.COLUMN_AVG_SCORE, avgScore);
+                    movie.put(MovieContract.MovieEntry.COLUMN_TMDB_ID, movieTMDBId);
 
                     moviesVector.add(movie);
                 }
-                int inserted = 0;
+                int moviesInserted = 0;
                 // add to database
                 if ( moviesVector.size() > 0 ) {
                     ContentValues[] moviesArray = new ContentValues[moviesVector.size()];
                     moviesVector.toArray(moviesArray);
-                    inserted = getContentResolver().bulkInsert(
+                    moviesInserted = getContentResolver().bulkInsert(
                             MovieContract.MovieEntry.CONTENT_URI, moviesArray);
                 }
 
-                Log.d(LOG_TAG, "Fetching movies' data Complete. " + inserted + " Inserted");
+                int relationsInserted = 0;
+
+                if ( relationsVector.size() > 0 ) {
+                    ContentValues[] relationsArray = new ContentValues[relationsVector.size()];
+                    relationsVector.toArray(relationsArray);
+                    relationsInserted = getContentResolver().bulkInsert(
+                            MovieContract.RelationEntry.CONTENT_URI, relationsArray);
+                }
+
+                Log.d(LOG_TAG, "Fetching movies' data Complete. " + moviesInserted +
+                        " movies inserted and" + relationsInserted + "relations inserted");
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

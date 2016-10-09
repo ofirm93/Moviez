@@ -57,6 +57,7 @@ public class MovieContract {
         public static final String COLUMN_POSTER_PATH = "poster_path";
         public static final String COLUMN_VOTE_COUNT = "vote_count";
         public static final String COLUMN_AVG_SCORE = "avg_score";
+        public static final String COLUMN_TMDB_ID = "tmdb_id";
 
         // This method builds a URI that corresponds to the given id
         public static Uri buildMovieUri(long id) {
@@ -154,10 +155,10 @@ public class MovieContract {
         // Column with the foreign key into the genres table.
         public static final String COLUMN_GENRE_ID = "genre_id";
         // Column with the foreign key into the movies table.
-        public static final String COLUMN_MOVIE_ID = "movie_id";
+        public static final String COLUMN_MOVIE_TMDB_ID = "movie_tmdb_id";
 
         // This method builds a URI that corresponds to the given id
-        public static Uri buildgRelationUri(long id) {
+        public static Uri buildRelationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

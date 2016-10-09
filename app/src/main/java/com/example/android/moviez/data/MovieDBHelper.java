@@ -31,7 +31,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // CREATE TABLE movie_all (_id INTEGER PRIMARY KEY,title TEXT NOT NULL,
         // release_date TEXT NOT NULL, language TEXT NOT NULL, overview TEXT NOT NULL,
         // adult BOOLEAN NOT NULL CHECK(adult IN (0,1)), poster_path TEXT NOT NULL,
-        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL);
+        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL, tmdb_id INTEGER NOT NULL);
         final String SQL_CREATE_MOVIE_TABLE = "CREATE TABLE " + MovieEntry.MAIN_TABLE_NAME + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY," +
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
@@ -42,7 +42,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_ADULT + " IN (0,1)), " +
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
-                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL" +
+                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL," +
+                MovieEntry.COLUMN_TMDB_ID + " INTEGER NOT NULL" +
                 ");";
 
         // Create a table to hold the genres. Each genre consists of its id given by TMDB site
@@ -62,18 +63,18 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // The SQL query created is:
         // CREATE TABLE relation_all (_id INTEGER PRIMARY KEY AUTOINCREMENT,
         // movie_id INTEGER NOT NULL, genre_id INTEGER NOT NULL,
-        // FOREIGN KEY (movie_id) REFERENCES movie_all (_id),
-        // FOREIGN KEY (genre_id) REFERENCES genre_all (_id));
+        // FOREIGN KEY (movie_id) REFERENCES movie_all (tmdb_id),
+        // FOREIGN KEY (genre_id) REFERENCES genre_all (genre_id));
         final String SQL_CREATE_RELATION_TABLE = "CREATE TABLE " + RelationEntry.MAIN_TABLE_NAME + " (" +
                 RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                RelationEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                RelationEntry.COLUMN_MOVIE_TMDB_ID + " INTEGER NOT NULL, " +
                 RelationEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie table
                 // and the genre_id column as a foreign key to genre table.
-                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieEntry.MAIN_TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_TMDB_ID + ") REFERENCES " +
+                MovieEntry.MAIN_TABLE_NAME + " (" + MovieEntry.COLUMN_TMDB_ID + "), " +
                 "FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
-                GenreEntry.MAIN_TABLE_NAME + " (" + GenreEntry._ID + ")" +
+                GenreEntry.MAIN_TABLE_NAME + " (" + GenreEntry.COLUMN_GENRE_ID + ")" +
                 ");";
 
         // Create a table to hold the favorite movies' details. Each movie consists of its name,
@@ -83,7 +84,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // CREATE TABLE movie_favorite (_id INTEGER PRIMARY KEY, title TEXT NOT NULL,
         // release_date TEXT NOT NULL, language TEXT NOT NULL, overview TEXT NOT NULL,
         // adult BOOLEAN NOT NULL CHECK(adult IN (0,1)), poster_path TEXT NOT NULL,
-        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL);
+        // vote_count INTEGER NOT NULL, avg_score DOUBLE NOT NULL, tmdb_id INTEGER NOT NULL);
         final String SQL_CREATE_MOVIE_FAVORITES_TABLE = "CREATE TABLE " +
                 MovieEntry.FAVORITES_TABLE_NAME + " (" +
                 MovieEntry._ID + " INTEGER PRIMARY KEY, " +
@@ -95,7 +96,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_ADULT + " IN (0,1)), " +
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_VOTE_COUNT + " INTEGER NOT NULL, " +
-                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL" +
+                MovieEntry.COLUMN_AVG_SCORE + " DOUBLE NOT NULL," +
+                MovieEntry.COLUMN_TMDB_ID + " INTEGER NOT NULL" +
                 ");";
 
         // Create a table to hold the favorite movies' genres. Each genre consists of its id given by TMDB site
@@ -115,18 +117,18 @@ public class MovieDbHelper extends SQLiteOpenHelper {
         // The SQL query created is:
         // CREATE TABLE relation_favorite (_id INTEGER PRIMARY KEY AUTOINCREMENT,
         // movie_id INTEGER NOT NULL, genre_id INTEGER NOT NULL,
-        // FOREIGN KEY (movie_id) REFERENCES movie_favorite (_id),
-        // FOREIGN KEY (genre_id) REFERENCES genre_favorite (_id));
+        // FOREIGN KEY (movie_id) REFERENCES movie_favorite (tmdb_id),
+        // FOREIGN KEY (genre_id) REFERENCES genre_favorite (genre_id));
         final String SQL_CREATE_RELATION_FAVORITES_TABLE = "CREATE TABLE " + RelationEntry.FAVORITES_TABLE_NAME + " (" +
                 RelationEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                RelationEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, " +
+                RelationEntry.COLUMN_MOVIE_TMDB_ID + " INTEGER NOT NULL, " +
                 RelationEntry.COLUMN_GENRE_ID + " INTEGER NOT NULL, " +
                 // Set up the movie_id column as a foreign key to movie table
                 // and the genre_id column as a foreign key to genre table.
-                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_ID + ") REFERENCES " +
-                MovieEntry.FAVORITES_TABLE_NAME + " (" + MovieEntry._ID + "), " +
+                "FOREIGN KEY (" + RelationEntry.COLUMN_MOVIE_TMDB_ID + ") REFERENCES " +
+                MovieEntry.FAVORITES_TABLE_NAME + " (" + MovieEntry.COLUMN_TMDB_ID + "), " +
                 "FOREIGN KEY (" + RelationEntry.COLUMN_GENRE_ID + ") REFERENCES " +
-                GenreEntry.FAVORITES_TABLE_NAME + " (" + GenreEntry._ID + ")" +
+                GenreEntry.FAVORITES_TABLE_NAME + " (" + GenreEntry.COLUMN_GENRE_ID + ")" +
                 ");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_MOVIE_TABLE);
