@@ -98,6 +98,13 @@ public class MovieProvider extends ContentProvider {
     private static final String sFavoriteMoviesGenreSelection = // TODO Right now seaching in favorites is by genre "name" and not id.
             MovieContract.GenreEntry.FAVORITES_TABLE_NAME +
                     "." + MovieContract.GenreEntry.COLUMN_NAME + " = ? ";
+
+    public static final String sFavoriteMoviesTMDBIdSelection =
+            MovieContract.MovieEntry.COLUMN_TMDB_ID + " = ? ";
+
+    public static final String sFavoriteRelationsTMDBIdSelection =
+            MovieContract.RelationEntry.COLUMN_MOVIE_TMDB_ID + " = ? ";
+
 /* TODO Delete if irrelavant.
 
     //location.location_setting = ? AND date >= ?
@@ -489,10 +496,14 @@ public class MovieProvider extends ContentProvider {
                 rowsDeleted = db.delete(
                         MovieContract.RelationEntry.MAIN_TABLE_NAME, selection, selectionArgs);
                 break;
-            case FAVORITE_MOVIE_BY_ID:
+            case FAVORITE_MOVIES:
                 rowsDeleted = db.delete(
                         MovieContract.MovieEntry.FAVORITES_TABLE_NAME, selection, selectionArgs);
                 break;
+            /*case FAVORITE_MOVIE_BY_ID: TODO Not sure if these lines are necessary.
+                rowsDeleted = db.delete(
+                        MovieContract.MovieEntry.FAVORITES_TABLE_NAME, selection, selectionArgs);
+                break;*/
             case FAVORITES_GENRES:
                 rowsDeleted = db.delete(
                         MovieContract.GenreEntry.FAVORITES_TABLE_NAME, selection, selectionArgs);
