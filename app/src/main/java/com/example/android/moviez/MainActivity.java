@@ -2,7 +2,6 @@ package com.example.android.moviez;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements MovieGalleryFragm
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

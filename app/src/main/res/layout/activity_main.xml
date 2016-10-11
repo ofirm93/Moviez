@@ -13,7 +13,7 @@
         android:orientation="vertical" >
 
         <include
-            android:id="@+id/toolbar"
+            android:id="@+id/main_toolbar"
             layout="@layout/toolbar"/>
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
