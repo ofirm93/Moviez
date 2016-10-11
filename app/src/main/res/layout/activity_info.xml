@@ -8,7 +8,7 @@
     tools:context="com.example.android.moviez.InfoActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+        android:id="@+id/info_app_bar"
         android:layout_width="match_parent"
         android:layout_height="255dp"
         android:fitsSystemWindows="true"
@@ -40,15 +40,15 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_info" />
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/info_favorite_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_favorite_border_white_24dp"
-        app:layout_anchor="@id/app_bar"
+        app:layout_anchor="@id/info_app_bar"
         app:layout_anchorGravity="bottom|end" />
+
+    <include layout="@layout/content_info" />
 
 </android.support.design.widget.CoordinatorLayout>
