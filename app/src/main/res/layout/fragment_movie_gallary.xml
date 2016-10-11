@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     tools:context="com.example.android.moviez.MainActivity" >
+
     <GridView
         android:id="@+id/fragment_movie_gallery_grid"
         android:layout_width="match_parent"
