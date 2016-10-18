@@ -6,6 +6,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -21,6 +24,9 @@ import android.widget.GridView;
 import com.example.android.moviez.Sync.GenreSyncService;
 import com.example.android.moviez.Sync.MoviezSyncService;
 import com.example.android.moviez.data.MovieContract;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static com.example.android.moviez.R.id.fab;
 
 public class MovieGalleryFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
     private static final String LOG_TAG = MovieGalleryFragment.class.getSimpleName();
@@ -66,6 +72,7 @@ public class MovieGalleryFragment extends Fragment implements LoaderManager.Load
             downloadNewPage(sharedPreferences.getInt(pages, -1));
         }
             isUpdatedDBOnce = true;
+
     }
 
     private void updateMoviesData(int page){
@@ -135,6 +142,15 @@ public class MovieGalleryFragment extends Fragment implements LoaderManager.Load
                         isDBUpdates = false;
                     }
                 }
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.main_search_button);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BottomSheetDialogFragment searchDialog = new SearchActivityFragment();
+                searchDialog.show(getFragmentManager(), "Tag");
             }
         });
         return view;

@@ -51,6 +51,15 @@
             android:name=".Sync.GenreSyncService"
             android:exported="false" />
 
+        <activity
+            android:name=".SearchActivity"
+            android:label="@string/title_activity_search"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.android.moviez.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
