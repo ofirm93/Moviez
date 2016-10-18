@@ -167,12 +167,4 @@
     <string name="drawer_open">Open app drawer</string>
     <string name="drawer_close">Close app drawer</string>
 
-
-    <!-- Utils package strings -->
-    <!-- RangeSeekBar strings -->
-
-    <string name="util_rangeseekbar_max_label">10</string>
-    <string name="util_rangeseekbar_min_label">0</string>
-
-
 </resources>
