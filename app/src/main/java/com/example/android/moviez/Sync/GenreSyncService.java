@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.android.moviez.R;
+import com.example.android.moviez.Utility;
 import com.example.android.moviez.data.MovieContract;
 
 import org.json.JSONArray;
@@ -27,9 +27,8 @@ import java.util.Vector;
 public class GenreSyncService extends IntentService {
 
     private final static String LOG_TAG = GenreSyncService.class.getSimpleName();
-    private static int nuberOfCalls = 0;
-    private final String myAPIKey = "33bf92db5dd97f28a99a01826efba1b3";
-    private SharedPreferences sharedPreferences;
+    private final static String mAPIKey = "33bf92db5dd97f28a99a01826efba1b3"; // TODO delete from the code
+    private SharedPreferences mSharedPreferences;
 
     public final static String PAGE_EXTRA_KEY = "current_page";
 
@@ -52,9 +51,12 @@ public class GenreSyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        if(sharedPreferences == null){
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(mSharedPreferences == null){
+            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         }
+
+        Utility.setLastUpdateNowLoading(mSharedPreferences);
+
         String genreJsonStr = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -63,11 +65,11 @@ public class GenreSyncService extends IntentService {
         final String API_KEY_PARAM = "api_key";
         final String LANGUAGE_PARAM = "language";
 
-        String lang = "en-US";
+        String lang = "en-US"; // TODO make this correspont to the language preference.
 
         try {
             Uri uri = Uri.parse(BASE_PATH).buildUpon()
-                    .appendQueryParameter(API_KEY_PARAM, myAPIKey)
+                    .appendQueryParameter(API_KEY_PARAM, mAPIKey)
                     .appendQueryParameter(LANGUAGE_PARAM, lang)
                     .build();
 
@@ -120,7 +122,7 @@ public class GenreSyncService extends IntentService {
             }
         }
         parseJSON(genreJsonStr);
-        nuberOfCalls++;
+        Utility.updateLastUpdate(mSharedPreferences);
     }
 
     private void parseJSON(String genreJsonStr) {
@@ -162,7 +164,4 @@ public class GenreSyncService extends IntentService {
         }
     }
 
-    public static int getNuberOfCalls() {
-        return nuberOfCalls;
-    }
 }

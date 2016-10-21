@@ -95,6 +95,7 @@ public class MovieProvider extends ContentProvider {
     private static final String sFavoriteMoviesIdSelection =
             MovieContract.MovieEntry.MAIN_TABLE_NAME +
                     "." + MovieContract.MovieEntry._ID + " = ? ";
+
     private static final String sFavoriteMoviesGenreSelection = // TODO Right now seaching in favorites is by genre "name" and not id.
             MovieContract.GenreEntry.FAVORITES_TABLE_NAME +
                     "." + MovieContract.GenreEntry.COLUMN_NAME + " = ? ";
@@ -104,6 +105,10 @@ public class MovieProvider extends ContentProvider {
 
     public static final String sFavoriteRelationsTMDBIdSelection =
             MovieContract.RelationEntry.COLUMN_MOVIE_TMDB_ID + " = ? ";
+
+    public static final String sAllGenresNameSelection =
+            MovieContract.GenreEntry.MAIN_TABLE_NAME +
+                    "." + MovieContract.GenreEntry.COLUMN_NAME + " = ? ";
 
 /* TODO Delete if irrelavant.
 

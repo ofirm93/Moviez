@@ -16,16 +16,20 @@
             android:id="@+id/main_toolbar"
             layout="@layout/toolbar"/>
 
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <FrameLayout
+            android:id="@+id/main_gallery_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <!--
+        <fragment
             android:id="@+id/gallery_frag"
             android:name="com.example.android.moviez.MovieGalleryFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context="com.example.android.moviez.MainActivity"
             tools:layout="@layout/fragment_movie_gallary" />
-        <!-- TODO: Delete android:layoutDirection line after finishing -->
-
+        &lt;!&ndash; TODO: Delete android:layoutDirection line after finishing &ndash;&gt;
+-->
     </LinearLayout>
 
     <android.support.design.widget.NavigationView

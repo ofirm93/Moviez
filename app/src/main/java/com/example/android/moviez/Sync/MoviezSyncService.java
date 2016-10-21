@@ -5,12 +5,11 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.android.moviez.R;
+import com.example.android.moviez.Utility;
 import com.example.android.moviez.data.MovieContract;
 
 import org.json.JSONArray;
@@ -23,11 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Vector;
-
-import static com.example.android.moviez.data.MovieContract.MovieEntry.COLUMN_POSTER_PATH;
 
 public class MoviezSyncService extends IntentService {
 
@@ -52,8 +47,8 @@ public class MoviezSyncService extends IntentService {
     // must change.
     static final int COL_GENRE_ID = 0;
 
-    private final String myAPIKey = "33bf92db5dd97f28a99a01826efba1b3";
-    private SharedPreferences sharedPreferences;
+    private final String mAPIKey = "33bf92db5dd97f28a99a01826efba1b3"; // TODO delete from the code
+    private SharedPreferences mSharedPreferences;
 
     public final static String PAGE_EXTRA_KEY = "current_page";
 
@@ -68,24 +63,26 @@ public class MoviezSyncService extends IntentService {
      * @see IntentService
      */
     // TODO: Create my own intent starter.
-    public static void startIntent(Context context, int page) {
+    public static void startIntent(Context context, Uri uri) {
         Intent intent = new Intent(context, MoviezSyncService.class);
-        intent.putExtra(PAGE_EXTRA_KEY, page);
+        intent.setData(uri);
         context.startService(intent);
     }
 
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if(mSharedPreferences == null){
+            mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        }
+
         boolean isDownloadedGenres = false;
         while(!isDownloadedGenres){
-            if(GenreSyncService.getNuberOfCalls() > 0) {
+            if(Utility.getLastUpdate(mSharedPreferences) >= 0) {
                 isDownloadedGenres = true;
             }
         }
-        if(sharedPreferences == null){
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        }
+
         String moviesJsonStr = null;
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
@@ -94,6 +91,7 @@ public class MoviezSyncService extends IntentService {
         final String TOP_RATED = "vote_average.desc";
         final String POPULARITY = "popularity.desc";*/
 
+        /*
         final String BASE_PATH = "https://api.themoviedb.org/3/movie";
         final String TOP_RATED = "top_rated";
         final String POPULAR = "popular";
@@ -103,8 +101,9 @@ public class MoviezSyncService extends IntentService {
 
         final int currentPage = intent.getIntExtra("current_page", 1);
 
-        String lang = "en-US";
-        String categoryPref = sharedPreferences.
+        String lang = "en-US"; // TODO make this correspont to the language preference.
+
+        String categoryPref = mSharedPreferences.
                 getString(getString(R.string.pref_key_sorting_option),
                         getString(R.string.pref_sort_rating));
 
@@ -114,17 +113,22 @@ public class MoviezSyncService extends IntentService {
         else{
             categoryPref = TOP_RATED;
         }
-        try {
-            Uri uri = Uri.parse(BASE_PATH).buildUpon()
+
+        Uri uri = Uri.parse(BASE_PATH).buildUpon()
                     .appendPath(categoryPref)
                     .appendQueryParameter(PAGE_PARAM, Integer.toString(currentPage))
-                    .appendQueryParameter(API_KEY_PARAM, myAPIKey)
+                    .appendQueryParameter(API_KEY_PARAM, mAPIKey)
                     .appendQueryParameter(LANGUAGE_PARAM, lang)
                     .build();
 
-            URL url = new URL(uri.toString());
+        **/
 
-            Log.d(LOG_TAG, uri.toString());
+        try {
+            Uri data = intent.getData();
+
+            URL url = new URL(data.toString());
+
+            Log.d(LOG_TAG, data.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -171,7 +175,7 @@ public class MoviezSyncService extends IntentService {
             }
         }
         parseJSON(moviesJsonStr);
-
+        Utility.addPage(mSharedPreferences);
     }
 
     private void parseJSON(String moviesJsonStr) {

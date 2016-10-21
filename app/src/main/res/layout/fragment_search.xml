@@ -173,7 +173,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:text="TextView"
@@ -189,6 +189,61 @@
             android:layout_height="wrap_content"
             android:id="@+id/filter_rating_high"
             android:gravity="right|end" />
+
     </LinearLayout>
+
+    <TextView
+        android:text="Year :"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView7"
+        android:layout_weight="1" />
+
+    <com.crystal.crystalrangeseekbar.widgets.CrystalRangeSeekbar
+        android:id="@+id/filter_year_rangebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        app:min_value="1874"
+        app:max_value="2017"
+        app:bar_color="@color/colorPrimary"
+        app:bar_highlight_color="@color/colorAccent"
+        app:left_thumb_color="@color/colorPrimary"
+        app:right_thumb_color="@color/colorPrimary"
+        app:left_thumb_color_pressed="@color/colorPrimaryDark"
+        app:right_thumb_color_pressed="@color/colorPrimaryDark"
+        app:data_type="_integer"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_year_low"
+            android:layout_weight="1"
+            android:gravity="left|start" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/filter_year_high"
+            android:gravity="right|end"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/filter_button"
+        android:text="Filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        style="@style/Widget.AppCompat.Button.Colored" />
 
 </LinearLayout>
